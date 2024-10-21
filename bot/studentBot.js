@@ -1,27 +1,20 @@
 const TelegramBot = require('node-telegram-bot-api');
-const fs = require('fs');
 require('dotenv').config();
 
 const token = process.env.STUDENT_BOT_TOKEN;
-
 const bot = new TelegramBot(token, { polling: true });
 
-const adminId = process.env.ADMIN_ID;
+const registrationLink = process.env.REGISTRATION_LINK; // Registration link
 
-
-const registrationLink = process.env.REGISTRATION_LINK; // 
+// Start command
 bot.onText(/\/start/, (msg) => {
     const chatId = msg.chat.id;
 
     // Send a welcome message
     bot.sendMessage(chatId, "Welcome to the Techtonic Tribe Bot! 🌟🙏");
 
-    // Show the main menu
-    if (chatId == adminId) {
-        showAdminMenu(chatId);
-    } else {
-        showUserMenu(chatId);
-    }
+    // Show the main menu for users
+    showUserMenu(chatId);
 });
 
 // Handle callback queries
@@ -29,12 +22,8 @@ bot.on('callback_query', (callbackQuery) => {
     const chatId = callbackQuery.message.chat.id;
     const data = callbackQuery.data;
 
-    if (chatId == adminId) {
-        handleAdminCallback(chatId, data);
-    } else {
-        handleUserCallback(chatId, data);
-    }
-
+    // Handle user callback queries
+    handleUserCallback(chatId, data);
     bot.answerCallbackQuery(callbackQuery.id);
 });
 
@@ -75,29 +64,5 @@ function handleUserCallback(chatId, data) {
         case 'registration_closed':
             bot.sendMessage(chatId, 'Registration is closed.');
             break;
-    }
-}
-
-// Show admin menu
-function showAdminMenu(chatId) {
-    bot.sendMessage(chatId, 'Welcome Admin! Please choose an option:', {
-        reply_markup: {
-            inline_keyboard: [
-                [{ text: 'View Registrations', callback_data: 'view_registrations' }],
-                [{ text: 'Statistics', callback_data: 'statistics' }]
-            ]
-        }
-    });
-}
-
-// Handle admin callback queries
-function handleAdminCallback(chatId, data) {
-    // Example for handling the view registrations callback
-    if (data === 'view_registrations') {
-        if (registrationLink) {
-            bot.sendMessage(chatId, `Registration link is available: ${registrationLink}`);
-        } else {
-            bot.sendMessage(chatId, 'Registration is closed.');
-        }
     }
 }
