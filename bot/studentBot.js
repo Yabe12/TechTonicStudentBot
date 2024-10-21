@@ -3,7 +3,7 @@ const fs = require('fs');
 require('dotenv').config();
 
 const token = process.env.STUDENT_BOT_TOKEN;
-const adminChannelId = process.env.ADMIN_CHANNEL_ID;
+
 const bot = new TelegramBot(token, { polling: true });
 
 const adminId = process.env.ADMIN_ID;
