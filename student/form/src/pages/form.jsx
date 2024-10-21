@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FaSpinner } from "react-icons/fa";
-import logo from './path/to/your/logo.png'; // Update the path to your logo image
+import logo from '../assets/photo_2024-10-21_09-34-09.jpg'; // Update the path to your logo image
 
 const StudentForm = () => {
   const [formData, setFormData] = useState({
@@ -95,13 +95,16 @@ const StudentForm = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-900 to-gray-200 flex items-center justify-center">
+    <div className="min-h-screen bg-gradient-to-b from-blue-900 to-gray-300 flex items-center justify-center">
       <div className="w-full max-w-md p-6">
-        <img src={logo} alt="Logo" className="mb-4 mx-auto" /> {/* Logo added here */}
-        <h2 className="text-2xl font-bold text-blue-700">Student Registration</h2>
+        <div className="flex items-center mb-4">
+          <img src={logo} alt="Logo" className="mr-4 w-16 h-16 object-cover" /> {/* Logo with size */}
+          <h2 className="text-2xl font-bold text-black-500">Student Registration</h2>
+        </div>
         {errorMessage && <p className="text-red-600">{errorMessage}</p>}
         <form onSubmit={handleSubmit} className="mt-4 space-y-4">
           {/* Full Name */}
+          
           <InputField
             label="Full Name"
             name="fullName"
@@ -135,7 +138,7 @@ const StudentForm = () => {
               <option value="">Select your sex</option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
-              <option value="Other">Other</option>
+            
             </select>
           </div>
 
@@ -177,24 +180,7 @@ const StudentForm = () => {
             placeholder="Enter your phone number"
           />
 
-          {/* Interests */}
-          <div>
-            <label className="block font-medium text-blue-600 mb-1">Interests</label>
-            <div className="flex flex-wrap">
-              {["Coding", "Design", "Music", "Sports", "Travel"].map((interest) => (
-                <label key={interest} className="mr-4">
-                  <input
-                    type="checkbox"
-                    value={interest}
-                    checked={formData.interests.includes(interest)}
-                    onChange={handleChange}
-                    className="mr-1"
-                  />
-                  {interest}
-                </label>
-              ))}
-            </div>
-          </div>
+          
 
           {/* Experience */}
           <div className="flex items-center">
