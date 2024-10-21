@@ -8,7 +8,7 @@ const token = process.env.BOT_TOKEN; // Your bot token
 const bot = new TelegramBot(token, { polling: true });
 
 // Load Google Sheets credentials
-const credentials = JSON.parse(fs.readFileSync('path/to/your/credentials.json'));
+const credentials = JSON.parse(fs.readFileSync('./config/credentials.json'));
 const sheets = google.sheets({ version: 'v4', auth: credentials });
 
 // Spreadsheet ID and range (customize as per your sheet)
