@@ -1,6 +1,6 @@
 // Load environment variables from .env file
 require('dotenv').config();
-const axios = require('axios');
+const axios = require('./node_modules/axios/index.d.cts');
 
 // Controller function to process form data and send it to Telegram
 const submitStudentForm = async (req, res) => {
