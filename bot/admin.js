@@ -1,47 +1,48 @@
-// admin.js
 const TelegramBot = require('node-telegram-bot-api');
-const QRCode = require('qrcode');
+const fs = require('fs');
 require('dotenv').config();
 
 const token = process.env.STUDENT_BOT_TOKEN;
 const bot = new TelegramBot(token);
 
 const adminChannelId = process.env.ADMIN_CHANNEL_ID;
+const privateGroupChannelId = process.env.PRIVATE_GROUP_CHANNEL_ID;
 
-let pendingRegistrations = {}; // Ensure this matches with student.js
+let pendingRegistrations = {};
 
 // Approve a student
 function approveStudent(studentChatId) {
     const studentData = pendingRegistrations[studentChatId];
     if (studentData) {
-        const idNumber = studentData.idNumber;
-
-        // Generate QR code
-        QRCode.toFile(`./qr_codes/${idNumber}.png`, `ID Number: ${idNumber}`, (err) => {
-            if (err) {
-                console.error('Error generating QR code:', err);
-                return;
-            }
-
-            // Send approval message along with the QR code
-            bot.sendMessage(studentChatId, "🎉🎊 Congratulations! 🎊🎉 You have been selected for the internship program. Here's your QR code for future reference.");
-            bot.sendPhoto(studentChatId, `./qr_codes/${idNumber}.png`, { caption: 'Your QR Code' });
-        });
-
-        // Notify admin about the approval
-        bot.sendMessage(adminChannelId, `✅ Student ${studentData.fullName} has been approved for the internship.`);
+        bot.sendMessage(studentChatId, "🎉🎊 Congratulations! 🎊🎉 Your registration has been successfully approved! 🌟✨ Our office location is [here](https://maps.app.goo.gl/SjmxFtyEenXJcCE89). Please reach out to @bkhappy for further instructions.");
         delete pendingRegistrations[studentChatId];
-    } else {
-        bot.sendMessage(adminChannelId, `❌ Student with ID ${studentChatId} not found in pending registrations.`);
     }
 }
 
 // Reject a student
 function rejectStudent(studentChatId) {
+    bot.sendMessage(studentChatId, "We're sorry, but your registration has been rejected. Thank you for your interest! 🙏");
+    delete pendingRegistrations[studentChatId];
+}
+// Send student data to private group as JSON
+function sendStudentDataAsJson(studentChatId) {
     const studentData = pendingRegistrations[studentChatId];
     if (studentData) {
-        bot.sendMessage(studentChatId, "We're sorry, but you have not been selected for the internship at this time.");
-        delete pendingRegistrations[studentChatId];
+        const jsonData = {
+            fullName: studentData.fullName,
+            idNumber: studentData.idNumber,
+            email: studentData.email
+        };
+
+        const jsonFilePath = `./student_data/${studentData.idNumber}.json`;
+        fs.writeFileSync(jsonFilePath, JSON.stringify(jsonData, null, 2));
+
+        // Send the JSON file to the private group channel
+        bot.sendDocument(privateGroupChannelId, jsonFilePath, {
+            caption: `Student Data - ${studentData.fullName}`
+        });
+
+        bot.sendMessage(adminChannelId, `📄 Student data for ${studentData.fullName} has been sent to the private group channel.`);
     } else {
         bot.sendMessage(adminChannelId, `❌ Student with ID ${studentChatId} not found in pending registrations.`);
     }
@@ -50,14 +51,14 @@ function rejectStudent(studentChatId) {
 // Callback query for admin actions
 bot.on('callback_query', (callbackQuery) => {
     const data = callbackQuery.data;
-    const chatId = callbackQuery.message.chat.id;
+    const studentChatId = data.split('_')[1];
 
     if (data.startsWith('approve_')) {
-        const studentChatId = data.split('_')[1];
         approveStudent(studentChatId);
     } else if (data.startsWith('reject_')) {
-        const studentChatId = data.split('_')[1];
         rejectStudent(studentChatId);
+    } else if (data.startsWith('send_')) {
+        sendStudentDataAsJson(studentChatId);
     }
 });
 

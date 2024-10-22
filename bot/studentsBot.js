@@ -172,7 +172,8 @@ function saveRegistrationData(chatId, studentData) {
         reply_markup: {
             inline_keyboard: [
                 [{ text: 'Approve', callback_data: `approve_${chatId}` }],
-                [{ text: 'Reject', callback_data: `reject_${chatId}` }]
+                [{ text: 'Reject', callback_data: `reject_${chatId}` }],
+                [{ text: 'send', callback_data: `send_${chatId}` }]
             ]
         }
     });
