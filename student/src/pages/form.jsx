@@ -15,7 +15,6 @@ const StudentForm = () => {
     hasExperience: false,
     yearsOfExperience: 0,
     cv: null,
-    universityDocument: null,
   });
 
   const [loading, setLoading] = useState(false);
@@ -25,30 +24,29 @@ const StudentForm = () => {
     const { name, value, checked } = e.target;
 
     if (name === "hasExperience") {
-      setFormData({ ...formData, hasExperience: checked });
+      setFormData((prev) => ({ ...prev, hasExperience: checked }));
     } else if (name === "interests") {
-      const interests = [...formData.interests];
-      if (interests.includes(value)) {
-        setFormData({
-          ...formData,
-          interests: interests.filter((interest) => interest !== value),
-        });
-      } else {
-        setFormData({ ...formData, interests: [...interests, value] });
-      }
+      setFormData((prev) => {
+        const interests = [...prev.interests];
+        if (interests.includes(value)) {
+          return { ...prev, interests: interests.filter((interest) => interest !== value) };
+        } else {
+          return { ...prev, interests: [...interests, value] };
+        }
+      });
     } else {
-      setFormData({ ...formData, [name]: value.trim() });
+      setFormData((prev) => ({ ...prev, [name]: value.trim() }));
     }
   };
 
   const handleFileChange = (e) => {
     const { name, files } = e.target;
-    setFormData({ ...formData, [name]: files[0] });
+    setFormData((prev) => ({ ...prev, [name]: files[0] }));
   };
 
   const validateForm = () => {
     for (const [key, value] of Object.entries(formData)) {
-      if (!value && key !== "yearsOfExperience" && key !== "universityDocument") {
+      if (!value && key !== "yearsOfExperience") {
         return `Please fill in the required field: ${key}`;
       }
     }
@@ -60,6 +58,7 @@ const StudentForm = () => {
     setLoading(true);
     setErrorMessage("");
 
+    // Validate form data
     const validationError = validateForm();
     if (validationError) {
       setErrorMessage(validationError);
@@ -68,10 +67,27 @@ const StudentForm = () => {
     }
 
     try {
-      // Simulate form submission logic here
-      console.log("Form submitted:", formData);
+      // Create a FormData object to prepare the data for submission
+      const formDataToSubmit = new FormData();
+      for (const key in formData) {
+        formDataToSubmit.append(key, formData[key]);
+      }
 
-      // Reset form after submission
+      const response = await fetch("http://localhost:3000/api/register", {
+        method: "POST",
+        body: formDataToSubmit, // No need to set Content-Type header
+      });
+      
+      // Check for a successful response
+      if (!response.ok) {
+        throw new Error("Failed to submit the form");
+      }
+
+      // Parse the response JSON
+      const result = await response.json();
+      console.log("Form submitted successfully:", result);
+
+      // Reset the form after successful submission
       setFormData({
         fullName: "",
         idNumber: "",
@@ -84,11 +100,10 @@ const StudentForm = () => {
         hasExperience: false,
         yearsOfExperience: 0,
         cv: null,
-        universityDocument: null,
       });
     } catch (error) {
-      console.error("Error submitting form:", error);
-      setErrorMessage("An error occurred while submitting the form.");
+      console.error("Error during form submission:", error);
+      setErrorMessage("An error occurred while submitting the form: " + error.message);
     } finally {
       setLoading(false);
     }
@@ -98,13 +113,12 @@ const StudentForm = () => {
     <div className="min-h-screen bg-gradient-to-b from-blue-900 to-gray-300 flex items-center justify-center">
       <div className="w-full max-w-md p-6">
         <div className="flex items-center mb-4">
-          <img src={logo} alt="Logo" className="mr-4 w-16 h-16 object-cover" /> {/* Logo with size */}
+          <img src={logo} alt="Logo" className="mr-4 w-16 h-16 object-cover" />
           <h2 className="text-2xl font-bold text-black-500">Student Registration</h2>
         </div>
         {errorMessage && <p className="text-red-600">{errorMessage}</p>}
         <form onSubmit={handleSubmit} className="mt-4 space-y-4">
           {/* Full Name */}
-          
           <InputField
             label="Full Name"
             name="fullName"
@@ -123,24 +137,13 @@ const StudentForm = () => {
           />
 
           {/* Sex */}
-          <div>
-            <label className="block font-medium text-blue-600 mb-1" htmlFor="sex">
-              Sex
-            </label>
-            <select
-              id="sex"
-              name="sex"
-              value={formData.sex}
-              onChange={handleChange}
-              required
-              className="w-full p-2 border border-gray-300 rounded focus:ring focus:ring-blue-300 focus:outline-none"
-            >
-              <option value="">Select your sex</option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-            
-            </select>
-          </div>
+          <SelectField
+            label="Sex"
+            name="sex"
+            value={formData.sex}
+            handleChange={handleChange}
+            options={["Select your sex", "Male", "Female"]}
+          />
 
           {/* Age */}
           <InputField
@@ -179,8 +182,6 @@ const StudentForm = () => {
             handleChange={handleChange}
             placeholder="Enter your phone number"
           />
-
-          
 
           {/* Experience */}
           <div className="flex items-center">
@@ -244,6 +245,28 @@ const InputField = ({ label, name, type = "text", value, handleChange, placehold
       className="w-full p-2 border border-gray-300 rounded focus:ring focus:ring-blue-300 focus:outline-none"
       placeholder={placeholder}
     />
+  </div>
+);
+
+const SelectField = ({ label, name, value, handleChange, options }) => (
+  <div>
+    <label className="block font-medium text-blue-600 mb-1" htmlFor={name}>
+      {label}
+    </label>
+    <select
+      id={name}
+      name={name}
+      value={value}
+      onChange={handleChange}
+      required
+      className="w-full p-2 border border-gray-300 rounded focus:ring focus:ring-blue-300 focus:outline-none"
+    >
+      {options.map((option, index) => (
+        <option key={index} value={option} disabled={option === "Select your sex"}>
+          {option}
+        </option>
+      ))}
+    </select>
   </div>
 );
 
