@@ -1,1 +1,1 @@
-# TechTonicStudentBot
+# TechTonicStudent
