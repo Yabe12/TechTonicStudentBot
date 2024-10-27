@@ -1,4 +1,4 @@
-import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Sidebar = () => {
   return (
@@ -17,19 +17,19 @@ const Sidebar = () => {
       <nav className="flex-1">
         <ul>
           <li className="mb-4">
-            <a href="#" className="hover:text-gray-300">Students</a>
+            <Link to="/students" className="hover:text-gray-300">Students</Link>
           </li>
           <li className="mb-4">
-            <a href="#" className="hover:text-gray-300">Members</a>
+            <Link to="/members" className="hover:text-gray-300">Members</Link>
           </li>
           <li className="mb-4">
-            <a href="#" className="hover:text-gray-300">Settings</a>
+            <Link to="/settings" className="hover:text-gray-300">Settings</Link>
           </li>
           <li className="mb-4">
-            <a href="#" className="hover:text-gray-300">Dashboard</a>
+            <Link to="/dashboard" className="hover:text-gray-300">Dashboard</Link>
           </li>
           <li className="mb-4">
-            <a href="#" className="hover:text-gray-300">Attendance</a>
+            <Link to="/attendance" className="hover:text-gray-300">Attendance</Link>
           </li>
         </ul>
       </nav>

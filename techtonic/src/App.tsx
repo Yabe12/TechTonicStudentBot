@@ -1,18 +1,29 @@
-// src/App.tsx
-import React from 'react';
 
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Sidebar from './components/Sidebar'; // Adjust the import based on your folder structure
+import Students from './components/students'; // Your actual pages/components
+import Members from './components/Members';
 
-import Sidebar from '../src/components/Sidebar';
+import Dashboard from './components/Dashboard';
+import Attendance from './components/Attendance';
 
 const App = () => {
   return (
-    <div className="flex">
-      <Sidebar />
-      <div className="flex-1 p-6">
-        {/* Main Content Goes Here */}
-        <h2 className="text-2xl font-bold">Welcome to the Dashboard</h2>
+    <Router>
+      <div className="flex">
+        <Sidebar />
+        <div className="flex-1 p-4">
+          <Routes>
+            <Route path="/students" element={<Students />} />
+            <Route path="/members" element={<Members />} />
+         
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/attendance" element={<Attendance />} />
+            {/* Add more routes as necessary */}
+          </Routes>
+        </div>
       </div>
-    </div>
+    </Router>
   );
 };
 
