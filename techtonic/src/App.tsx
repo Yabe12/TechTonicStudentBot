@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Navbar from './components/Navbar'; // Adjust the import based on your folder structure
+import Navbar from './components/navbar'; // Adjust the import based on your folder structure
 import Students from './components/Students'; // Your actual pages/components
 import Members from './components/Members';
 import Dashboard from './components/Dashboard';
