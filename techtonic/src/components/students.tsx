@@ -1,16 +1,16 @@
+import React from 'react';
+import { FaTrash, FaEdit, FaSave } from 'react-icons/fa';
 
-import { FaTrash, FaEdit, FaSave } from "react-icons/fa";
-
-const Students = () => {
+const Students: React.FC = () => {
   // Sample data
   const students = [
-    { number: 1, idNumber: "S1001", status: "Accepted" },
-    { number: 2, idNumber: "S1002", status: "Rejected" },
-    { number: 3, idNumber: "S1003", status: "Accepted" },
+    { number: 1, idNumber: "S1001", fullName: "John Doe", status: "Accepted" },
+    { number: 2, idNumber: "S1002", fullName: "Jane Smith", status: "Rejected" },
+    { number: 3, idNumber: "S1003", fullName: "Alice Johnson", status: "Accepted" },
   ];
 
   // Function to handle action events
-  const handleAction = (action, id) => {
+  const handleAction = (action: 'edit' | 'delete' | 'save', id: string) => {
     console.log(`${action} action triggered for student with ID: ${id}`);
   };
 
@@ -23,15 +23,17 @@ const Students = () => {
           <tr>
             <th className="border px-4 py-2">Number</th>
             <th className="border px-4 py-2">ID Number</th>
+            <th className="border px-4 py-2">Full Name</th>
             <th className="border px-4 py-2">Status</th>
             <th className="border px-4 py-2">Action</th>
           </tr>
         </thead>
         <tbody>
-          {students.map((student, index) => (
-            <tr key={index} className="text-center">
+          {students.map((student) => (
+            <tr key={student.idNumber} className="text-center">
               <td className="border px-4 py-2">{student.number}</td>
               <td className="border px-4 py-2">{student.idNumber}</td>
+              <td className="border px-4 py-2">{student.fullName}</td>
               <td
                 className={`border px-4 py-2 ${
                   student.status === "Accepted"
