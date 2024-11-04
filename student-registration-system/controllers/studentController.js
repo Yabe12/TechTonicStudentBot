@@ -21,10 +21,10 @@ async function getSheetsClient() {
 }
 const transporter = nodemailer.createTransport({
     host: 'sandbox.smtp.mailtrap.io',
-    port: 2525, // Use the port number provided by Mailtrap
+    port: 2525, 
     auth: {
-        user: process.env.MAILTRAP_USER, // Your Mailtrap SMTP user
-        pass: process.env.MAILTRAP_PASSWORD // Your Mailtrap SMTP password
+        user: process.env.MAILTRAP_USER, 
+        pass: process.env.MAILTRAP_PASSWORD
     }
 });
 
